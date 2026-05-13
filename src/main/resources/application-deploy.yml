@@ -1,0 +1,37 @@
+# ============================================================
+# TeamFiles Deployment Profile
+# 免安装部署：H2 嵌入式数据库，无需 MySQL/Redis
+# ============================================================
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchClientAutoConfiguration
+      - org.springframework.boot.autoconfigure.elasticsearch.ReactiveElasticsearchClientAutoConfiguration
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./data/db/teamfiles;MODE=MySQL;DB_CLOSE_DELAY=-1;AUTO_RECONNECT=TRUE
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema-h2.sql
+      continue-on-error: true
+
+# Knife4j disabled in deploy mode
+knife4j:
+  enable: false
+springdoc:
+  api-docs:
+    enabled: false
+
+logging:
+  level:
+    root: warn
+    com.myself.teamfiles: info

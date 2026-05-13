@@ -23,35 +23,38 @@
 
 ## 快速启动
 
-### 1. 启动 MySQL 和 Redis
+### 方式一：免安装部署（推荐）
 
-确保 MySQL 和 Redis 服务已运行。
-
-### 2. 后端启动
+**只需安装 Java 21**，无需 MySQL、Redis、Node.js。
 
 ```bash
-# Windows
-mvnw spring-boot:run
+# 1. 克隆项目
+git clone https://github.com/ZhaoNianfan/teamFilm.git
+cd teamFilm
 
-# 端口: 8088
-# 首次启动自动创建数据库和表
+# 2. 双击运行
+deploy.bat    # 首次运行自动构建前端+后端，之后直接启动
 ```
 
-### 3. 前端启动
+浏览器打开 `http://localhost:8088`，默认账号 **admin** / **admin123**。
+
+H2 数据库文件存储在 `data/db/` 目录，数据持久化，重启不丢失。
+
+### 方式二：开发模式
+
+需要 MySQL 8.4 + Redis 7 + Node.js 18+。
 
 ```bash
+# 后端 (端口 8088)
+mvnw spring-boot:run
+
+# 前端 (端口 5173)
 cd teamfiles-web
 npm install
 npm run dev
-
-# 端口: 5173，自动代理 /api 到后端 8088
 ```
 
-### 4. 登录
-
-浏览器打开 `http://localhost:5173`
-
-- 默认管理员：**admin** / **admin123**
+浏览器打开 `http://localhost:5173`。
 - 首次登录强制修改密码
 
 ### API 文档
