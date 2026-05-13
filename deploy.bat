@@ -3,7 +3,9 @@ chcp 65001 >nul
 title TeamFiles Deploy
 echo ============================================
 echo   TeamFiles 免安装部署
-echo   只需 Java 21，无需 MySQL/Redis
+echo   环境要求: 仅需 Java 21
+echo   首次运行需联网下载依赖（约5分钟）
+echo   后续启动直接使用 run.bat
 echo ============================================
 echo.
 
