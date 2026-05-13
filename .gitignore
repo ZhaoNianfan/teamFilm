@@ -34,7 +34,6 @@ build/
 
 ### Node ###
 node_modules/
-dist/
 
 ### Application data ###
 data/files/

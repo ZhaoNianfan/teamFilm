@@ -25,7 +25,7 @@ export interface UserInfo {
 }
 
 export function login(params: LoginParams) {
-  return request.post<any, LoginResult>('/auth/login', params)
+  return request.post<any, { code: number; msg: string; data: LoginResult }>('/auth/login', params)
 }
 
 export function logout() {

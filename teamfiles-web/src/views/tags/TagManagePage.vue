@@ -158,7 +158,7 @@ import type { TagItem, TagGroupItem } from '@/api/tag'
 import {
   getTagList, createTag, updateTag, deleteTag, getFilesByTag, getSimilarTags,
   getTagGroupList, createTagGroup, updateTagGroup, deleteTagGroup,
-  removeTagFromGroup, addTagsToGroup
+  removeTagFromGroup as removeTagFromGroupApi, addTagsToGroup
 } from '@/api/tag'
 
 const tags = ref<TagItem[]>([])
@@ -246,7 +246,9 @@ async function deleteTagClick(tag: TagItem) {
   try {
     await ElMessageBox.confirm(`确定删除标签 "${tag.tagName}"？关联文件不受影响。`, '确认', { type: 'warning' })
     await deleteTag(tag.id)
-    if (selectedTagId.value === tag.id) selectedTagId.value = null
+    selectedTagIds.value.delete(tag.id)
+    selectedTagIds.value = new Set(selectedTagIds.value)
+    if (selectedTagIds.value.size === 0) tagFiles.value = []
     ElMessage.success('已删除'); loadData()
   } catch { /* */ }
 }
@@ -305,7 +307,7 @@ async function saveGroup() {
 }
 async function removeTagFromGroup(tagId: number) {
   if (!editingGroup.value) return
-  await removeTagFromGroup(editingGroup.value.id, tagId)
+  await removeTagFromGroupApi(editingGroup.value.id, tagId)
   groupFormTags.value = groupFormTags.value.filter(t => t.id !== tagId); loadData()
 }
 async function onAddTagsToGroup(ids: number[]) {

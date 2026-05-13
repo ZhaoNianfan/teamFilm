@@ -80,11 +80,11 @@
             type="textarea"
             :rows="2"
             placeholder="输入消息，Enter 发送，Shift+Enter 换行"
-            :disabled="streaming"
+            :disabled="thinking"
             @keydown.enter.exact="sendMessage"
           />
           <div class="input-actions">
-            <el-button @click="openFilePicker" :disabled="streaming" size="small">
+            <el-button @click="openFilePicker" :disabled="thinking" size="small">
               <el-icon><FolderOpened /></el-icon> 引用文件
             </el-button>
             <el-button

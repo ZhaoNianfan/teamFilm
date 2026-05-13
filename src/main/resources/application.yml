@@ -1,6 +1,11 @@
 server:
   port: 8088
 
+# Serve built frontend from dist directory (production mode)
+# In dev mode, use Vite dev server at port 5173
+app:
+  frontend-dist: ${FRONTEND_DIST:./teamfiles-web/dist}
+
 spring:
   application:
     name: teamfiles
