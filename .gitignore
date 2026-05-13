@@ -39,6 +39,7 @@ node_modules/
 data/files/
 data/chunks/
 data/backups/
+data/db/
 
 ### Environment ###
 .env.local
