@@ -9,7 +9,7 @@ const request: AxiosInstance = axios.create({
 
 request.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -26,6 +26,8 @@ request.interceptors.response.use(
       if (resp.code === 401 || resp.code === 402) {
         localStorage.removeItem('token')
         localStorage.removeItem('userInfo')
+        sessionStorage.removeItem('token')
+        sessionStorage.removeItem('userInfo')
         window.location.href = '/login'
       }
       return Promise.reject(new Error(resp.msg))
@@ -36,6 +38,8 @@ request.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('userInfo')
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('userInfo')
       window.location.href = '/login'
       return Promise.reject(error)
     }

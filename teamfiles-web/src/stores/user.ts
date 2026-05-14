@@ -5,13 +5,40 @@ import { login as loginApi, logout as logoutApi, getCurrentUser } from '@/api/au
 import type { LoginParams } from '@/api/auth'
 
 export const useUserStore = defineStore('user', () => {
-  const token = ref<string>(localStorage.getItem('token') || '')
-  const userInfo = ref<UserInfo | null>(null)
-  const permissions = ref<string[]>([])
+  const token = ref<string>(getStoredToken())
+  const userInfo = ref<UserInfo | null>(loadUserInfo())
+  const permissions = ref<string[]>(userInfo.value ? [userInfo.value.role] : [])
 
-  function setToken(newToken: string) {
+  function getStoredToken(): string {
+    return localStorage.getItem('token') || sessionStorage.getItem('token') || ''
+  }
+
+  function loadUserInfo(): UserInfo | null {
+    try {
+      const raw = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo')
+      return raw ? JSON.parse(raw) : null
+    } catch {
+      return null
+    }
+  }
+
+  function setToken(newToken: string, rememberMe: boolean) {
     token.value = newToken
-    localStorage.setItem('token', newToken)
+    if (rememberMe) {
+      localStorage.setItem('token', newToken)
+      sessionStorage.removeItem('token')
+    } else {
+      sessionStorage.setItem('token', newToken)
+      localStorage.removeItem('token')
+    }
+  }
+
+  function saveUserInfo(info: UserInfo) {
+    userInfo.value = info
+    permissions.value = [info.role]
+    const key = localStorage.getItem('token') ? 'localStorage' : 'sessionStorage'
+    const storage = key === 'localStorage' ? localStorage : sessionStorage
+    storage.setItem('userInfo', JSON.stringify(info))
   }
 
   async function login(params: LoginParams) {
@@ -20,20 +47,16 @@ export const useUserStore = defineStore('user', () => {
     if (data.needChangePassword) {
       return data
     }
-    setToken(data.token)
-    userInfo.value = data.userInfo
-    localStorage.setItem('userInfo', JSON.stringify(data.userInfo))
-    permissions.value = [data.userInfo.role]
+    setToken(data.token, params.rememberMe ?? false)
+    saveUserInfo(data.userInfo)
     return data
   }
 
   async function fetchUserInfo() {
     if (!token.value) return
     try {
-      const info = await getCurrentUser()
-      userInfo.value = info
-      localStorage.setItem('userInfo', JSON.stringify(info))
-      permissions.value = [info.role]
+      const resp = await getCurrentUser()
+      saveUserInfo(resp.data)
     } catch {
       resetState()
     }
@@ -53,6 +76,8 @@ export const useUserStore = defineStore('user', () => {
     permissions.value = []
     localStorage.removeItem('token')
     localStorage.removeItem('userInfo')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('userInfo')
   }
 
   function hasRole(role: string): boolean {

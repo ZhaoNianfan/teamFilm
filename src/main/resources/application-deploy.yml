@@ -31,6 +31,9 @@ springdoc:
   api-docs:
     enabled: false
 
+app:
+  frontend-dist: ./dist
+
 logging:
   level:
     root: warn

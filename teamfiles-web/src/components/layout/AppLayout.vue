@@ -97,7 +97,7 @@ const avatarIcon = computed(() => {
   return '👥'
 })
 onMounted(async () => {
-  if (!userStore.userInfo) {
+  if (userStore.token) {
     await userStore.fetchUserInfo()
   }
 })

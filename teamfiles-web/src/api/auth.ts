@@ -37,7 +37,7 @@ export function refreshToken() {
 }
 
 export function getCurrentUser() {
-  return request.get<any, UserInfo>('/auth/me')
+  return request.get<any, { code: number; msg: string; data: UserInfo }>('/auth/me')
 }
 
 export function changeFirstPassword(username: string, oldPassword: string, newPassword: string) {

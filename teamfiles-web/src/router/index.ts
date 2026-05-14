@@ -103,7 +103,8 @@ router.beforeEach((to, _from, next) => {
     return
   }
 
-  if (!userStore.token) {
+  const savedToken = localStorage.getItem('token') || sessionStorage.getItem('token')
+  if (!userStore.token && !savedToken) {
     next('/login')
     return
   }

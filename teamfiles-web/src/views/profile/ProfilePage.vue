@@ -42,14 +42,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
-import { changeFirstPassword } from '@/api/auth'
 import request from '@/api/request'
 
 const userStore = useUserStore()
-const userInfo = ref(userStore.userInfo)
+const userInfo = computed(() => userStore.userInfo)
 
 const pwdForm = ref({ oldPassword: '', newPassword: '', confirmPassword: '' })
 const pwdLoading = ref(false)
@@ -90,11 +89,4 @@ function formatSize(bytes?: number): string {
   if (!bytes) return '0 B'
   return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB'
 }
-
-onMounted(async () => {
-  if (!userInfo.value) {
-    await userStore.fetchUserInfo()
-    userInfo.value = userStore.userInfo
-  }
-})
 </script>

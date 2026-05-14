@@ -50,21 +50,15 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
+                        // Public API endpoints (no auth required)
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/refresh",
                                 "/api/v1/auth/password").permitAll()
-                        // Static resources and API docs
-                        .requestMatchers(
-                                "/doc.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/webjars/**",
-                                "/favicon.ico"
-                        ).permitAll()
                         // Admin endpoints
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
-                        // All other endpoints require authentication
-                        .anyRequest().authenticated()
+                        // All API endpoints require authentication
+                        .requestMatchers("/api/**").authenticated()
+                        // Everything else (SPA routes, static resources, H2 console) is public
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

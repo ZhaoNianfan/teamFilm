@@ -1,55 +1,54 @@
 @echo off
-chcp 65001 >nul
 title TeamFiles Deploy
 echo ============================================
-echo   TeamFiles 免安装部署
-echo   环境要求: 仅需 Java 21
-echo   首次运行需联网下载依赖（约5分钟）
-echo   后续启动直接使用 run.bat
+echo   TeamFiles - Portable Deployment
+echo   Requires: Java 21 only
+echo   First run needs internet (~5 min for deps)
+echo   Subsequent launches use run.bat
 echo ============================================
 echo.
 
 :: Check Java
 java -version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [ERROR] 未找到 Java，请先安装 JDK 21+
-    echo 下载地址: https://adoptium.net/download/
+    echo [ERROR] Java not found. Please install JDK 21+
+    echo Download: https://adoptium.net/download/
     pause
     exit /b 1
 )
-echo [OK] Java 已就绪
+echo [OK] Java is ready
 
 :: Build frontend if needed
 if not exist "teamfiles-web\dist\index.html" (
     echo.
-    echo [1/3] 构建前端...
+    echo [1/3] Building frontend...
     cd teamfiles-web
     call npm install --silent
     call npm run build
     cd ..
-    echo [OK] 前端构建完成
+    echo [OK] Frontend build done
 ) else (
-    echo [OK] 前端已构建
+    echo [OK] Frontend already built
 )
 
 :: Build backend JAR if needed
 if not exist "target\teamfiles-0.0.1-SNAPSHOT.jar" (
     echo.
-    echo [2/3] 构建后端...
+    echo [2/3] Building backend...
     call mvnw package -DskipTests -q
-    echo [OK] 后端构建完成
+    echo [OK] Backend build done
 ) else (
-    echo [OK] 后端已构建
+    echo [OK] Backend already built
 )
 
 :: Start application with H2 profile
 echo.
-echo [3/3] 启动服务...
+echo [3/3] Starting service...
 echo.
 echo ============================================
-echo   服务地址: http://localhost:8088
-echo   默认账号: admin / admin123
-echo   H2 控制台: http://localhost:8088/h2-console
+echo   URL: http://localhost:8088
+echo   Account: admin / admin123
+echo   H2 Console: http://localhost:8088/h2-console
 echo ============================================
 echo.
 java -jar target\teamfiles-0.0.1-SNAPSHOT.jar --spring.profiles.active=deploy
